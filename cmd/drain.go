@@ -5,9 +5,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/vickleford/gcsps/internal/gcs"
-	"google.golang.org/api/option"
-	pubsub "google.golang.org/api/pubsub/v1"
 )
 
 var drainCmd = &cobra.Command{
@@ -17,15 +14,10 @@ var drainCmd = &cobra.Command{
 		project := args[0]
 		subscription := args[1]
 
-		svc, err := pubsub.NewService(context.TODO(),
-			option.WithEndpoint(endpoint),
-			option.WithoutAuthentication(),
-		)
+		client, err := gcpClient(endpoint, project)
 		if err != nil {
 			return err
 		}
-
-		client := gcs.New(project, svc)
 
 		fmt.Fprintf(cmd.OutOrStdout(), "draining from project %s on subscription %s\n", project, subscription)
 

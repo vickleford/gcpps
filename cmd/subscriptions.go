@@ -6,9 +6,6 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/vickleford/gcsps/internal/gcs"
-	"google.golang.org/api/option"
-	pubsub "google.golang.org/api/pubsub/v1"
 )
 
 var listSubscriptionsCmd = &cobra.Command{
@@ -18,15 +15,10 @@ var listSubscriptionsCmd = &cobra.Command{
 		project := args[0]
 		topic := args[1]
 
-		svc, err := pubsub.NewService(context.TODO(),
-			option.WithEndpoint(endpoint),
-			option.WithoutAuthentication(),
-		)
+		client, err := gcpClient(endpoint, project)
 		if err != nil {
 			return err
 		}
-
-		client := gcs.New(project, svc)
 
 		subs, err := client.ListSubscriptions(context.TODO(), topic)
 		if err != nil {

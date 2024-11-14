@@ -5,9 +5,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/vickleford/gcsps/internal/gcs"
-	"google.golang.org/api/option"
-	pubsub "google.golang.org/api/pubsub/v1"
 )
 
 var publishCmd = &cobra.Command{
@@ -18,15 +15,10 @@ var publishCmd = &cobra.Command{
 		topic := args[1]
 		data := args[2]
 
-		svc, err := pubsub.NewService(context.TODO(),
-			option.WithEndpoint(endpoint),
-			option.WithoutAuthentication(),
-		)
+		client, err := gcpClient(endpoint, project)
 		if err != nil {
 			return err
 		}
-
-		client := gcs.New(project, svc)
 
 		fmt.Fprintf(cmd.OutOrStdout(), "publishing to project %s on topic %s: %s\n", project, topic, data)
 

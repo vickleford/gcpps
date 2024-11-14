@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/vickleford/gcsps/cmd"
+	"github.com/vickleford/gcpps/cmd"
 )
 
 func main() {

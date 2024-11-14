@@ -1,4 +1,4 @@
-module github.com/vickleford/gcsps
+module github.com/vickleford/gcpps
 
 go 1.23.2
 
