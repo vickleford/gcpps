@@ -11,6 +11,14 @@
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
             "args": ["drain", "vawtest", "footopic", "consumergroup1"]
+        },
+        {
+            "name": "topics",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/main.go",
+            "args": ["topics", "vawtest"]
         }
     ]
 }

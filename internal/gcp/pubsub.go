@@ -223,12 +223,12 @@ func (c *Client) Drain(ctx context.Context, subscription string) error {
 }
 
 func (c *Client) ListTopics(ctx context.Context) ([]string, error) {
-
+	projectsPath := path.Join("projects", c.project)
 	topics := make([]string, 0)
 
 	var nextPage string
 	for {
-		call := c.svc.Projects.Topics.List(c.project).Context(ctx)
+		call := c.svc.Projects.Topics.List(projectsPath).Context(ctx)
 		call.PageToken(nextPage)
 
 		resp, err := call.Do()
@@ -236,27 +236,42 @@ func (c *Client) ListTopics(ctx context.Context) ([]string, error) {
 			return nil, err
 		}
 
+		for _, topic := range resp.Topics {
+			topics = append(topics, topic.Name)
+		}
+
 		if resp.NextPageToken == "" {
 			break
 		}
 
 		nextPage = resp.NextPageToken
-
-		for _, topic := range resp.Topics {
-			topics = append(topics, topic.Name)
-		}
 	}
 
 	return topics, nil
 }
 
 func (c *Client) ListSubscriptions(ctx context.Context, topic string) ([]string, error) {
-	call := c.svc.Projects.Topics.Subscriptions.List(topic).Context(ctx)
+	topicsPath := path.Join("projects", c.project, "topics", topic)
+	subscriptions := make([]string, 0)
 
-	resp, err := call.Do()
-	if err != nil {
-		return nil, err
+	var nextPage string
+	for {
+		call := c.svc.Projects.Topics.Subscriptions.List(topicsPath).Context(ctx)
+		call.PageToken(nextPage)
+
+		resp, err := call.Do()
+		if err != nil {
+			return nil, err
+		}
+
+		subscriptions = append(subscriptions, resp.Subscriptions...)
+
+		if resp.NextPageToken == "" {
+			break
+		}
+
+		nextPage = resp.NextPageToken
 	}
 
-	return resp.Subscriptions, nil
+	return subscriptions, nil
 }
