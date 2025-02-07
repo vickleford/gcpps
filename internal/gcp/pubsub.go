@@ -91,6 +91,10 @@ type SubscribeEvent struct {
 }
 
 func (c *Client) Subscribe(ctx context.Context, topic, subscription string) (chan SubscribeEvent, error) {
+	if err := c.createTopicIfNotExists(ctx, topic); err != nil {
+		return nil, err
+	}
+
 	subscription = path.Join("projects", c.project, "subscriptions", subscription)
 
 	// create a new subscription...
