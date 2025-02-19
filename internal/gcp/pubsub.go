@@ -22,7 +22,7 @@ func New(project string, svc *pubsub.Service) *Client {
 	return &Client{svc: svc, project: project}
 }
 
-func (c *Client) Publish(ctx context.Context, topic, data string) (string, error) {
+func (c *Client) Publish(ctx context.Context, topic, contentType, data string) (string, error) {
 	if err := c.createTopicIfNotExists(ctx, topic); err != nil {
 		return "", err
 	}
@@ -34,7 +34,7 @@ func (c *Client) Publish(ctx context.Context, topic, data string) (string, error
 	call := c.svc.Projects.Topics.Publish(topic, &pubsub.PublishRequest{
 		Messages: []*pubsub.PubsubMessage{
 			{
-				Attributes: map[string]string{"Content-Type": "application/json"},
+				Attributes: map[string]string{"Content-Type": contentType},
 				Data:       encodedData,
 			},
 		},

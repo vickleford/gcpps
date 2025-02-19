@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const flagContentType = "content-type"
+
 var publishCmd = &cobra.Command{
 	Use:  "publish [PROJECT] [TOPIC] [DATA]",
 	Args: cobra.ExactArgs(3),
@@ -22,7 +24,12 @@ var publishCmd = &cobra.Command{
 
 		fmt.Fprintf(cmd.OutOrStdout(), "publishing to project %s on topic %s: %s\n", project, topic, data)
 
-		id, err := client.Publish(context.TODO(), topic, data)
+		contentType, err := cmd.Flags().GetString(flagContentType)
+		if err != nil {
+			return err
+		}
+
+		id, err := client.Publish(context.TODO(), topic, contentType, data)
 		if err != nil {
 			return err
 		}
@@ -31,4 +38,8 @@ var publishCmd = &cobra.Command{
 
 		return nil
 	},
+}
+
+func init() {
+	publishCmd.Flags().String(flagContentType, "text/plain", "Set the content type of the data to publish")
 }
